@@ -1,10 +1,9 @@
 package com.squad.roster.local;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +16,14 @@ public class Roster {
     private Long id;
     private String name;
 
+    @OneToMany
+    private List<Squad> squads;
+
     public Roster(String name) {
         this.name = name;
+    }
+
+    public void addSquad(Squad squad) {
+        squads.add(squad);
     }
 }
