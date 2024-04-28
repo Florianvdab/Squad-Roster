@@ -1,7 +1,10 @@
 package com.squad.roster.local;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -16,7 +19,7 @@ public class Roster {
     private Long id;
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "roster", fetch = FetchType.EAGER)
     private List<Squad> squads;
 
     public Roster(String name) {

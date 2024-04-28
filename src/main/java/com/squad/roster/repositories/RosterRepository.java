@@ -14,4 +14,8 @@ public interface RosterRepository extends CrudRepository<Roster, Long> {
     @NotNull
     @Override
     Optional<Roster> findById(@NotNull Long aLong);
+
+    //make a function that checks if a roster exists
+    @NotNull
+    Optional<Roster> findByName(@NotNull String name);
 }
