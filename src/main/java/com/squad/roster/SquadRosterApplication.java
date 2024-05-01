@@ -1,5 +1,6 @@
 package com.squad.roster;
 
+import com.squad.roster.repositories.RosterRepository;
 import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -9,8 +10,11 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
+
 
 @SpringBootApplication
+@PropertySource("classpath:application.properties")
 public class SquadRosterApplication {
 
     private final Listener listener;
@@ -32,9 +36,10 @@ public class SquadRosterApplication {
                 .build();
         jda.addEventListener(listener);
 
+
         jda.updateCommands().addCommands(
                 Commands.slash("roster", "View the roster"),
-                Commands.slash("create-roster", "Create a new roster"),
+                Commands.slash("edit-roster", "Edit a roster"),
                 Commands.slash("create-squad", "Create a new squad")
                         .addOptions(
                                 new OptionData(OptionType.STRING, "roster", "The roster to create the squad in", true),

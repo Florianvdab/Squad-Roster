@@ -10,12 +10,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 //TODO: for now there's only one discord, so the database is strictly theirs
 // implement it so that the bot can be used in multiple servers
@@ -50,56 +54,72 @@ public class Listener extends ListenerAdapter {
 
     private void handleSquadCommand(SlashCommandInteractionEvent event) {
         String roster = event.getOption("roster").getAsString();
-        rosterRepository.findByName(roster).ifPresentOrElse(
-                r -> {
-                    Role role = event.getOption("role").getAsRole();
-                    String name = event.getOption("name").getAsString();
+        rosterRepository.findByName(roster).ifPresentOrElse(r -> {
+            Role role = event.getOption("role").getAsRole();
+            String name = event.getOption("name").getAsString();
 
-                    event.getGuild().getMembersWithRoles(role)
-                            .forEach(member -> System.out.println(member.getEffectiveName()));
 
-                    Squad squad = new Squad(r, name);
-                    squad.attachRole(role.getIdLong());
-                    squadRepository.save(squad);
+            event.getGuild().getMembersWithRoles(role).forEach(member -> System.out.println(member.getEffectiveName()));
 
-                    event.reply("Squad created").queue();
-                },
-                () -> event.reply("Roster not found").queue()
-        );
+            Squad squad = new Squad(r, name);
+            squad.attachRole(role.getIdLong());
+            squadRepository.save(squad);
+
+            event.reply("Squad created").queue();
+        }, () -> event.reply("Roster not found").queue());
     }
 
     private void handleRosterCommand(SlashCommandInteractionEvent event) {
         // print out the roster
-        StringBuilder sb = new StringBuilder();
+
+        event.deferReply().queue();
+
         rosterRepository.findAll().forEach(roster -> {
-            sb.append("Roster: ")
-                    .append(roster.getName()).append("\n");
+
+            event.getHook().sendMessage("Roster: " + roster.getName()).queue();
+
             roster.getSquads().forEach(squad -> {
-                sb.append("Squad: ").append(squad.getName()).append("\n");
-                event.getGuild().getMembersWithRoles(event.getGuild().getRoleById(squad.getConnectedRoleId()))
-                        .forEach(member -> sb.append(member.getAsMention()).append("\n"));
+                StringBuilder sb = new StringBuilder();
+
+                Role role = event.getGuild().getRoleById(squad.getConnectedRoleId());
+
+                sb.append("Squad: ");
+                sb.append(squad.getName());
+                sb.append(" (");
+                sb.append(role.getAsMention());
+                sb.append(")");
+
+                sb.append("\n");
+                sb.append("Members:");
+
+                event.getGuild().getMembersWithRoles(role).forEach((bar) -> {
+                    sb.append("\n");
+                    sb.append(bar.getAsMention());
+                });
+
+                event.getHook().sendMessage(sb.toString())
+                        .addActionRow(
+                                Button.primary("id-button-1", "Change role"),
+                                Button.secondary("rename-button-" + squad.getId(), "Change name"),
+                                Button.danger("id-button-3", "Delete squad")
+                        ).queue();
             });
         });
-        event.reply(sb.toString()).queue();
     }
 
 
     private void handleCreateRosterCommand(SlashCommandInteractionEvent event) {
         // create a new roster
-        TextInput textInput = TextInput.create("roster-name", "Enter the name of the roster", TextInputStyle.SHORT)
-                .setPlaceholder("Enter the name of the roster")
-                .setMinLength(3)
-                .setMaxLength(32)
-                .setRequired(true)
-                .build();
-
-        Modal modal = Modal.create("create-roster", "Create a new roster")
-                .addActionRow(textInput)
-                .setTitle("Create a new roster")
-                .build();
-
-        event.replyModal(modal)
-                .queue();
+        Optional.ofNullable(event.getOption("name")).ifPresentOrElse(option -> {
+            String rosterName = option.getAsString();
+            if (!isNullOrEmpty(rosterName)) {
+                Roster roster = new Roster(rosterName, event.getGuild().getId());
+                rosterRepository.save(roster);
+                event.reply("Roster created").queue();
+            } else {
+                event.reply("Invalid roster name").queue();
+            }
+        }, () -> event.reply("Invalid roster name").queue());
     }
 
     @Override
@@ -107,20 +127,48 @@ public class Listener extends ListenerAdapter {
         if (event.getModalId().equals("create-roster")) {
             String rosterName = event.getValue("roster-name").getAsString();
             if (!isNullOrEmpty(rosterName)) {
-                Roster roster = new Roster(rosterName);
+                Roster roster = new Roster(rosterName, event.getGuild().getId());
                 rosterRepository.save(roster);
                 event.reply("Roster created").queue();
             }
+        }
+        if (event.getModalId().startsWith("rename-modal-")) {
+            String squadId = event.getModalId().replace("rename-modal-", "");
+            Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
+            squad.ifPresentOrElse(s -> {
+                String newName = event.getValue("new-name").getAsString();
+                if (!isNullOrEmpty(newName)) {
+                    s.setName(newName);
+                    squadRepository.save(s);
+                    event.reply("Squad renamed").queue();
+                } else {
+                    event.reply("Invalid name").queue();
+                }
+            }, () -> event.reply("Squad not found").queue());
         }
         super.onModalInteraction(event);
     }
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (event.getComponentId().equals("squad-name")) {
-            event.reply("Button clicked").queue();
+        if (event.getComponent().getId().startsWith("rename-button-")) {
+            String squadId = event.getComponent().getId().replace("rename-button-", "");
+            Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
+            squad.ifPresentOrElse(s -> {
+                //ask for the new name
+
+                TextInput input = TextInput.create("new-name", "New name", TextInputStyle.SHORT)
+                        .setMaxLength(32)
+                        .build();
+
+                Modal modal = Modal.create("rename-modal-" + s.getId(), "Rename squad")
+                        .addComponents(ActionRow.of(input))
+                        .build();
+
+                event.replyModal(modal).queue();
+
+            }, () -> event.reply("Squad not found").queue());
         }
-        super.onButtonInteraction(event);
     }
 
     public boolean isNullOrEmpty(String str) {

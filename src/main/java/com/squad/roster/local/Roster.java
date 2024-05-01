@@ -17,12 +17,14 @@ public class Roster {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String guildId;
     private String name;
 
     @OneToMany(mappedBy = "roster", fetch = FetchType.EAGER)
     private List<Squad> squads;
 
-    public Roster(String name) {
+    public Roster(String name, String guildId) {
+        this.guildId = guildId;
         this.name = name;
     }
 
