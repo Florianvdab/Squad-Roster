@@ -1,4 +1,4 @@
-package com.squad.roster.local;
+package com.squad.roster.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

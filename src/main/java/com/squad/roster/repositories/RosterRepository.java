@@ -1,6 +1,6 @@
 package com.squad.roster.repositories;
 
-import com.squad.roster.local.Roster;
+import com.squad.roster.model.Roster;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,7 @@
-package com.squad.roster.local.command;
+package com.squad.roster.command.slash;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public interface Command {
+public interface SlashCommand {
     void execute(SlashCommandInteractionEvent event);
 }
-

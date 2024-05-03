@@ -1,11 +1,10 @@
-package com.squad.roster.local.command;
+package com.squad.roster.command.slash;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class FrankCommand implements Command {
-
+public class ShowRosterSlash implements SlashCommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply("UHH FRANK").queue();
+
     }
 }
