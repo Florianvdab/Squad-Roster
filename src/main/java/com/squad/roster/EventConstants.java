@@ -7,13 +7,14 @@ public class EventConstants {
 
     public static final String RENAME_ROSTER_BUTTON_COMMAND = "rename-roster-";
     public static final String DELETE_ROSTER_BUTTON_COMMAND = "delete-roster-";
-
     public static final String CREATE_SQUAD_BUTTON_COMMAND = "create-squad-";
     public static final String DELETE_SQUAD_BUTTON_COMMAND = "delete-squad-";
     public static final String RENAME_SQUAD_BUTTON_COMMAND = "rename-squad-";
+    public static final String ATTACH_ROLE_SQUAD_BUTTON_COMMAND = "attach-role-to-squad-";
 
     public static final String RENAME_ROSTER_MODAL_COMMAND = "rename-roster-modal-";
     public static final String RENAME_SQUAD_MODAL_COMMAND = "rename-squad-modal-";
+    public static final String CREATE_SQUAD_MODAL_COMMAND = "create-squad-modal-";
 
-    public static final String RENAME_INPUT = "rename-input";
+    public static final String NAME_INPUT = "rename-input";
 }

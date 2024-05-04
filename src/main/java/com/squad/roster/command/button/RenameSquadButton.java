@@ -24,7 +24,7 @@ public class RenameSquadButton implements ButtonCommand {
         Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
         squad.ifPresentOrElse(s -> {
             //ask for the new name
-            TextInput input = TextInput.create(RENAME_INPUT, "New name", TextInputStyle.SHORT)
+            TextInput input = TextInput.create(NAME_INPUT, "New name", TextInputStyle.SHORT)
                     .setMaxLength(32)
                     .build();
 

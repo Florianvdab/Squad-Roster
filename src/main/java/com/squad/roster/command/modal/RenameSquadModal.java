@@ -20,7 +20,7 @@ public class RenameSquadModal implements ModalCommand {
         String squadId = event.getModalId().replace("rename-modal-", "");
         Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
         squad.ifPresentOrElse(s -> {
-                    String newName = event.getValue(EventConstants.RENAME_INPUT).getAsString();
+                    String newName = event.getValue(EventConstants.NAME_INPUT).getAsString();
                     if (!StringUtil.isNotNullOrEmpty(newName)) {
                         s.setName(newName);
                         squadRepository.save(s);
