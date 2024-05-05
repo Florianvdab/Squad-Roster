@@ -4,6 +4,7 @@ public class EventConstants {
     public static final String ROSTER_SLASH_COMMAND = "roster";
     public static final String CREATE_ROSTER_SLASH_COMMAND = "create-roster";
     public static final String EDIT_ROSTER_SLASH_COMMAND = "edit-roster";
+    public static final String CREATE_SQUAD_SLASH_COMMAND = "create-squad";
 
     public static final String RENAME_ROSTER_BUTTON_COMMAND = "rename-roster-";
     public static final String DELETE_ROSTER_BUTTON_COMMAND = "delete-roster-";

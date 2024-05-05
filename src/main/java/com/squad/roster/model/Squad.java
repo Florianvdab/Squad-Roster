@@ -26,14 +26,14 @@ public class Squad {
     private List<SquadMember> squadMembers;
 
     private String name;
-    private Long connectedRoleId;
+    private String connectedRoleId;
 
     public Squad(Roster roster, String name) {
         this.roster = roster;
         this.name = name;
     }
 
-    public void attachRole(Long roleId) {
+    public void attachRole(String roleId) {
         this.connectedRoleId = roleId;
     }
 

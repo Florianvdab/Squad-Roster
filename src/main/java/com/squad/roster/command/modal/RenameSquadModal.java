@@ -13,12 +13,17 @@ import java.util.Optional;
 public class RenameSquadModal implements ModalCommand {
 
     @Autowired
-    private SquadRepository squadRepository;
+    private final SquadRepository squadRepository;
+
+    public RenameSquadModal(SquadRepository squadRepository) {
+        this.squadRepository = squadRepository;
+    }
+
 
     @Override
     public void execute(ModalInteractionEvent event) {
         String squadId = event.getModalId().replace("rename-modal-", "");
-        Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
+        Optional<Squad> squad = squadRepository.findById(squadId);
         squad.ifPresentOrElse(s -> {
                     String newName = event.getValue(EventConstants.NAME_INPUT).getAsString();
                     if (!StringUtil.isNotNullOrEmpty(newName)) {

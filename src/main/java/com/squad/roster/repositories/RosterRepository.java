@@ -8,12 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RosterRepository extends CrudRepository<Roster, Long> {
+public interface RosterRepository extends CrudRepository<Roster, String> {
     @NotNull
     @Override
-    Optional<Roster> findById(@NotNull Long aLong);
+    Optional<Roster> findById(@NotNull String string);
 
     //make a function that checks if a roster exists
-    @NotNull
     Optional<Roster> findByName(@NotNull String name);
 }

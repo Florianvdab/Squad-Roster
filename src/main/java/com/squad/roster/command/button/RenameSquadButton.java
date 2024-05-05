@@ -16,12 +16,16 @@ import static com.squad.roster.EventConstants.*;
 public class RenameSquadButton implements ButtonCommand {
 
     @Autowired
-    private SquadRepository squadRepository;
+    private final SquadRepository squadRepository;
+
+    public RenameSquadButton(SquadRepository squadRepository) {
+        this.squadRepository = squadRepository;
+    }
 
     @Override
     public void execute(ButtonInteractionEvent event) {
         String squadId = event.getComponent().getId().replace(RENAME_SQUAD_BUTTON_COMMAND, "");
-        Optional<Squad> squad = squadRepository.findById(Long.parseLong(squadId));
+        Optional<Squad> squad = squadRepository.findById(squadId);
         squad.ifPresentOrElse(s -> {
             //ask for the new name
             TextInput input = TextInput.create(NAME_INPUT, "New name", TextInputStyle.SHORT)

@@ -5,6 +5,7 @@ import com.squad.roster.repositories.SquadRepository;
 import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +38,11 @@ public class SquadRosterApplication {
         jda.updateCommands().addCommands(
                 Commands.slash(EventConstants.ROSTER_SLASH_COMMAND, "View the roster"),
                 Commands.slash(EventConstants.CREATE_ROSTER_SLASH_COMMAND, "Create a roster"),
-                Commands.slash(EventConstants.EDIT_ROSTER_SLASH_COMMAND, "Edit a roster")
+                Commands.slash(EventConstants.EDIT_ROSTER_SLASH_COMMAND, "Edit a roster"),
+                Commands.slash(EventConstants.CREATE_SQUAD_SLASH_COMMAND, "Create a squad")
+                        .addOption(OptionType.STRING, "roster", "roster", true)
+                        .addOption(OptionType.ROLE, "role", "role", true)
+                        .addOption(OptionType.STRING, "name", "name", true)
         ).queue();
     }
 }

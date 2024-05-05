@@ -6,4 +6,4 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SquadRepository extends CrudRepository<Squad, Long> {}
+public interface SquadRepository extends CrudRepository<Squad, String> {}

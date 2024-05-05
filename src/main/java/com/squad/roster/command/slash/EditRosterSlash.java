@@ -5,12 +5,13 @@ import com.squad.roster.repositories.RosterRepository;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EditRosterSlash implements SlashCommand {
 
-
+    @Autowired
     private final RosterRepository rosterRepository;
 
     public EditRosterSlash(RosterRepository rosterRepository) {
