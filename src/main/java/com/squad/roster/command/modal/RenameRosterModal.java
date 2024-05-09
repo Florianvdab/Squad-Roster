@@ -3,13 +3,11 @@ package com.squad.roster.command.modal;
 import com.squad.roster.EventConstants;
 import com.squad.roster.repositories.RosterRepository;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.squad.roster.EventConstants.NAME_INPUT;
 
 public class RenameRosterModal implements ModalCommand {
 
-    @Autowired
     private final RosterRepository rosterRepository;
 
     public RenameRosterModal(RosterRepository rosterRepository) {

@@ -1,12 +1,16 @@
 package com.squad.roster.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,8 +19,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Roster {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id = UUID.randomUUID().toString();
+
     private String guildId;
     private String name;
 
@@ -26,9 +30,5 @@ public class Roster {
     public Roster(String name, String guildId) {
         this.guildId = guildId;
         this.name = name;
-    }
-
-    public void addSquad(Squad squad) {
-        squads.add(squad);
     }
 }

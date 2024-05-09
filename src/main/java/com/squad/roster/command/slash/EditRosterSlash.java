@@ -1,17 +1,23 @@
 package com.squad.roster.command.slash;
 
 import com.squad.roster.EventConstants;
+import com.squad.roster.model.Roster;
 import com.squad.roster.repositories.RosterRepository;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class EditRosterSlash implements SlashCommand {
 
-    @Autowired
     private final RosterRepository rosterRepository;
 
     public EditRosterSlash(RosterRepository rosterRepository) {
@@ -22,41 +28,64 @@ public class EditRosterSlash implements SlashCommand {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        rosterRepository.findAll().forEach(roster -> {
+        Optional.ofNullable(event.getGuild()).ifPresentOrElse(
+                (guild -> {
+                    List<Roster> rosters = rosterRepository.findAllByGuildId(guild.getId());
 
-            event.getHook().sendMessage("Roster: " + roster.getName())
-                    .addActionRow(
-                            Button.primary(EventConstants.RENAME_ROSTER_BUTTON_COMMAND + roster.getId(), "Change name"),
-                            Button.danger(EventConstants.DELETE_ROSTER_BUTTON_COMMAND + roster.getId(), "Delete roster"),
-                            Button.success(EventConstants.CREATE_SQUAD_BUTTON_COMMAND, "Create squad"))
-                    .queue();
+                    if (rosters.isEmpty()) {
+                        event.getHook().sendMessage("No rosters found, please create a roster using the /create-roster command").queue();
+                    }
+                    if (rosters.size() == 1) {
+                        showRoster(event.getHook(), guild, rosters.getFirst());
+                    }
+                    if (rosters.size() > 1) {
+                        event.getHook().sendMessage("Select a roster to edit").addActionRow(StringSelectMenu.create("test-id")
+                                .setRequiredRange(1, 1)
+                                .addOptions(
+                                        rosters.stream()
+                                                .map(roster -> SelectOption.of(roster.getName(), roster.getId()))
+                                                .toList())
+                                .setPlaceholder("Select a roster to edit")
+                                .build()).queue();
+                    }
+                }),
+                () -> event.getHook().sendMessage("This command can only be used in a server").queue()
+        );
+    }
 
-            roster.getSquads().forEach(squad -> {
-                StringBuilder sb = new StringBuilder();
+    public void showRoster(InteractionHook hook, Guild guild, Roster roster) {
+        hook.sendMessage("Roster: " + roster.getName())
+                .addActionRow(
+                        Button.primary(EventConstants.RENAME_ROSTER_BUTTON_COMMAND + roster.getId(), "Change name"),
+                        Button.danger(EventConstants.DELETE_ROSTER_BUTTON_COMMAND + roster.getId(), "Delete roster"),
+                        Button.success(EventConstants.CREATE_SQUAD_BUTTON_COMMAND, "Create squad"))
+                .queue();
 
-                Role role = event.getGuild().getRoleById(squad.getConnectedRoleId());
+        roster.getSquads().forEach(squad -> {
+            StringBuilder sb = new StringBuilder();
 
-                sb.append("Squad: ");
-                sb.append(squad.getName());
-                sb.append(" (");
-                sb.append(role.getAsMention());
-                sb.append(")");
+            Role role = guild.getRoleById(squad.getConnectedRoleId());
 
+            sb.append("Squad: ");
+            sb.append(squad.getName());
+            sb.append(" (");
+            sb.append(role.getAsMention());
+            sb.append(")");
+
+            sb.append("\n");
+            sb.append("Members:");
+
+            guild.getMembersWithRoles(role).forEach((bar) -> {
                 sb.append("\n");
-                sb.append("Members:");
-
-                event.getGuild().getMembersWithRoles(role).forEach((bar) -> {
-                    sb.append("\n");
-                    sb.append(bar.getAsMention());
-                });
-
-                event.getHook().sendMessage(sb.toString())
-                        .addActionRow(
-                                Button.primary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON_COMMAND + squad.getId(), "Change role"),
-                                Button.secondary(EventConstants.RENAME_SQUAD_BUTTON_COMMAND + squad.getId(), "Change name"),
-                                Button.danger(EventConstants.DELETE_SQUAD_BUTTON_COMMAND + squad.getId(), "Delete squad")
-                        ).queue();
+                sb.append(bar.getAsMention());
             });
+
+            hook.sendMessage(sb.toString())
+                    .addActionRow(
+                            Button.primary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON_COMMAND + squad.getId(), "Change role"),
+                            Button.secondary(EventConstants.RENAME_SQUAD_BUTTON_COMMAND + squad.getId(), "Change name"),
+                            Button.danger(EventConstants.DELETE_SQUAD_BUTTON_COMMAND + squad.getId(), "Delete squad")
+                    ).queue();
         });
     }
 }

@@ -5,14 +5,12 @@ import com.squad.roster.model.Squad;
 import com.squad.roster.repositories.SquadRepository;
 import com.squad.roster.util.StringUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
 
 public class RenameSquadModal implements ModalCommand {
 
-    @Autowired
     private final SquadRepository squadRepository;
 
     public RenameSquadModal(SquadRepository squadRepository) {

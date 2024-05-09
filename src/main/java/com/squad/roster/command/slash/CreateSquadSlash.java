@@ -5,14 +5,12 @@ import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateSquadSlash implements SlashCommand {
 
-    @Autowired
+
     private final RosterRepository rosterRepository;
 
-    @Autowired
     private final SquadRepository squadRepository;
 
     public CreateSquadSlash(RosterRepository rosterRepository, SquadRepository squadRepository) {

@@ -1,14 +1,12 @@
 package com.squad.roster.command.button;
 
 import com.squad.roster.model.Roster;
-import com.squad.roster.model.Squad;
 import com.squad.roster.repositories.RosterRepository;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -16,8 +14,7 @@ import static com.squad.roster.EventConstants.*;
 
 public class RenameRosterButton implements ButtonCommand {
 
-    @Autowired
-    private  final RosterRepository rosterRepository;
+    private final RosterRepository rosterRepository;
 
     public RenameRosterButton(RosterRepository rosterRepository) {
         this.rosterRepository = rosterRepository;

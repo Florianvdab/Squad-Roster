@@ -15,10 +15,10 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.squad.roster.EventConstants.*;
@@ -26,10 +26,8 @@ import static com.squad.roster.EventConstants.*;
 @Component
 public class Listener extends ListenerAdapter {
 
-    @Autowired
     private final SquadRepository squadRepository;
 
-    @Autowired
     private final RosterRepository rosterRepository;
 
     public Listener(SquadRepository squadRepository, RosterRepository rosterRepository) {
@@ -46,7 +44,7 @@ public class Listener extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case ROSTER_SLASH_COMMAND -> new ShowRosterSlash().execute(event);
-            case CREATE_ROSTER_SLASH_COMMAND -> new CreateRosterSlash().execute(event);
+            case CREATE_ROSTER_SLASH_COMMAND -> new CreateRosterSlash(rosterRepository).execute(event);
             case EDIT_ROSTER_SLASH_COMMAND -> new EditRosterSlash(rosterRepository).execute(event);
             case CREATE_SQUAD_SLASH_COMMAND -> new CreateSquadSlash(rosterRepository, squadRepository).execute(event);
             default -> event.reply("Unknown command").queue();
@@ -85,6 +83,19 @@ public class Listener extends ListenerAdapter {
     public void onEntitySelectInteraction(EntitySelectInteractionEvent event) {
         if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON_COMMAND)) {
             new AttachRoleToSquadSelection().execute(event);
+        }
+    }
+
+    @Override
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+        event.deferReply().queue();
+        if (event.getComponentId().startsWith("test-id")) {
+
+            String rosterId = event.getValues().getFirst();
+            new EditRosterSlash(rosterRepository).showRoster(
+                    event.getHook(),
+                    event.getGuild(),
+                    rosterRepository.findById(rosterId).orElseThrow());
         }
     }
 }

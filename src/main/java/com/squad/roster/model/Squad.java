@@ -1,29 +1,28 @@
 package com.squad.roster.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Squad {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final String id = UUID.randomUUID().toString();
 
     @ManyToOne
     @JoinColumn(name = "roster_id")
     private Roster roster;
-
-    @OneToMany
-    private List<SquadMember> squadMembers;
 
     private String name;
     private String connectedRoleId;
@@ -35,9 +34,5 @@ public class Squad {
 
     public void attachRole(String roleId) {
         this.connectedRoleId = roleId;
-    }
-
-    public void addSquadMember(SquadMember squadMember) {
-        squadMembers.add(squadMember);
     }
 }
