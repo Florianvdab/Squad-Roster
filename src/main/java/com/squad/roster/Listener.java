@@ -43,45 +43,45 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
-            case ROSTER_SLASH_COMMAND -> new ShowRosterSlash().execute(event);
-            case CREATE_ROSTER_SLASH_COMMAND -> new CreateRosterSlash(rosterRepository).execute(event);
-            case EDIT_ROSTER_SLASH_COMMAND -> new EditRosterSlash(rosterRepository).execute(event);
-            case CREATE_SQUAD_SLASH_COMMAND -> new CreateSquadSlash(rosterRepository, squadRepository).execute(event);
+            case ROSTER_SLASH -> new ShowRosterSlash().execute(event);
+            case CREATE_ROSTER_SLASH -> new CreateRosterSlash(rosterRepository).execute(event);
+            case EDIT_ROSTER_SLASH -> new EditRosterSlash(rosterRepository).execute(event);
+            case CREATE_SQUAD_SLASH -> new CreateSquadSlash(rosterRepository, squadRepository).execute(event);
             default -> event.reply("Unknown command").queue();
         }
     }
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
-        if (event.getComponentId().startsWith(RENAME_ROSTER_BUTTON_COMMAND)) {
+        if (event.getComponentId().startsWith(RENAME_ROSTER_BUTTON)) {
             new RenameRosterButton(rosterRepository).execute(event);
-        } else if (event.getComponentId().startsWith(DELETE_ROSTER_BUTTON_COMMAND)) {
+        } else if (event.getComponentId().startsWith(DELETE_ROSTER_BUTTON)) {
             new DeleteRosterButton(rosterRepository).execute(event);
-        } else if (event.getComponentId().startsWith(CREATE_SQUAD_BUTTON_COMMAND)) {
+        } else if (event.getComponentId().startsWith(CREATE_SQUAD_BUTTON)) {
             new CreateSquadButton().execute(event);
-        } else if (event.getComponentId().startsWith(DELETE_SQUAD_BUTTON_COMMAND)) {
+        } else if (event.getComponentId().startsWith(DELETE_SQUAD_BUTTON)) {
             new DeleteSquadButton(squadRepository).execute(event);
-        } else if (event.getComponentId().startsWith(RENAME_SQUAD_BUTTON_COMMAND)) {
+        } else if (event.getComponentId().startsWith(RENAME_SQUAD_BUTTON)) {
             new RenameSquadButton(squadRepository).execute(event);
-        } else if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON_COMMAND)) {
+        } else if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON)) {
             new AttachRoleToSquadButton().execute(event);
         }
     }
 
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
-        if (event.getModalId().startsWith(RENAME_ROSTER_MODAL_COMMAND)) {
+        if (event.getModalId().startsWith(RENAME_ROSTER_MODAL)) {
             new RenameRosterModal(rosterRepository).execute(event);
-        } else if (event.getModalId().startsWith(RENAME_SQUAD_MODAL_COMMAND)) {
+        } else if (event.getModalId().startsWith(RENAME_SQUAD_MODAL)) {
             new RenameSquadModal(squadRepository).execute(event);
-        } else if (event.getModalId().startsWith(CREATE_SQUAD_MODAL_COMMAND)) {
+        } else if (event.getModalId().startsWith(CREATE_SQUAD_MODAL)) {
             new CreateSquadModal().execute(event);
         }
     }
 
     @Override
     public void onEntitySelectInteraction(EntitySelectInteractionEvent event) {
-        if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON_COMMAND)) {
+        if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON)) {
             new AttachRoleToSquadSelection().execute(event);
         }
     }
@@ -89,8 +89,7 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         event.deferReply().queue();
-        if (event.getComponentId().startsWith("test-id")) {
-
+        if (event.getComponentId().startsWith(EDIT_ROSTER_STRING_SELECT)) {
             String rosterId = event.getValues().getFirst();
             new EditRosterSlash(rosterRepository).showRoster(
                     event.getHook(),

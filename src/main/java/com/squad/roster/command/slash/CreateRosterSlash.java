@@ -23,10 +23,10 @@ public class CreateRosterSlash implements SlashCommand {
             if (isNotNullOrEmpty(rosterName)) {
                 Roster roster = new Roster(rosterName, event.getGuild().getId());
                 rosterRepository.save(roster);
-                event.reply("Roster created").queue();
+                event.reply("Roster created").setEphemeral(true).queue();
             } else {
-                event.reply("Invalid roster name").queue();
+                event.reply("Invalid roster name").setEphemeral(true).queue();
             }
-        }, () -> event.reply("Invalid roster name").queue());
+        }, () -> event.reply("Invalid roster name").setEphemeral(true).queue());
     }
 }

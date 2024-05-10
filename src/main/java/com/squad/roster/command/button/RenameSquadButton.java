@@ -22,7 +22,7 @@ public class RenameSquadButton implements ButtonCommand {
 
     @Override
     public void execute(ButtonInteractionEvent event) {
-        String squadId = event.getComponent().getId().replace(RENAME_SQUAD_BUTTON_COMMAND, "");
+        String squadId = event.getComponent().getId().replace(RENAME_SQUAD_BUTTON, "");
         Optional<Squad> squad = squadRepository.findById(squadId);
         squad.ifPresentOrElse(s -> {
             //ask for the new name
@@ -30,7 +30,7 @@ public class RenameSquadButton implements ButtonCommand {
                     .setMaxLength(32)
                     .build();
 
-            Modal modal = Modal.create(RENAME_SQUAD_MODAL_COMMAND + s.getId(), "Rename squad")
+            Modal modal = Modal.create(RENAME_SQUAD_MODAL + s.getId(), "Rename squad")
                     .addComponents(ActionRow.of(input))
                     .build();
 

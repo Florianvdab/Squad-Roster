@@ -14,7 +14,7 @@ public class DeleteSquadButton implements ButtonCommand {
 
     @Override
     public void execute(ButtonInteractionEvent event) {
-        String id = event.getComponentId().replace(EventConstants.DELETE_SQUAD_BUTTON_COMMAND, "");
+        String id = event.getComponentId().replace(EventConstants.DELETE_SQUAD_BUTTON, "");
         squadRepository.deleteById(id);
         event.reply("squad deleted").queue();
     }

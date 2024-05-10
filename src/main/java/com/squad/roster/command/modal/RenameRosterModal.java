@@ -16,7 +16,7 @@ public class RenameRosterModal implements ModalCommand {
 
     @Override
     public void execute(ModalInteractionEvent event) {
-        String id = event.getModalId().replace(EventConstants.RENAME_ROSTER_BUTTON_COMMAND, "");
+        String id = event.getModalId().replace(EventConstants.RENAME_ROSTER_BUTTON, "");
         String name = event.getValue(NAME_INPUT).getAsString();
 
         rosterRepository.findById(id).ifPresentOrElse(roster -> {

@@ -16,7 +16,7 @@ public class DeleteRosterButton implements ButtonCommand {
     @Override
     @Transactional
     public void execute(ButtonInteractionEvent event) {
-        String id = event.getComponentId().replace(EventConstants.DELETE_ROSTER_BUTTON_COMMAND, "");
+        String id = event.getComponentId().replace(EventConstants.DELETE_ROSTER_BUTTON, "");
 
         rosterRepository.deleteById(id);
         event.reply("roster deleted").queue();

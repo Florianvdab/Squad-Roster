@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.squad.roster.EventConstants.EDIT_ROSTER_STRING_SELECT;
+
 @Component
 public class EditRosterSlash implements SlashCommand {
 
@@ -39,14 +41,17 @@ public class EditRosterSlash implements SlashCommand {
                         showRoster(event.getHook(), guild, rosters.getFirst());
                     }
                     if (rosters.size() > 1) {
-                        event.getHook().sendMessage("Select a roster to edit").addActionRow(StringSelectMenu.create("test-id")
-                                .setRequiredRange(1, 1)
-                                .addOptions(
-                                        rosters.stream()
-                                                .map(roster -> SelectOption.of(roster.getName(), roster.getId()))
-                                                .toList())
-                                .setPlaceholder("Select a roster to edit")
-                                .build()).queue();
+                        event.getHook().sendMessage("Select a roster to edit")
+                                .addActionRow(
+                                        StringSelectMenu.create(EDIT_ROSTER_STRING_SELECT)
+                                                .setRequiredRange(1, 1)
+                                                .addOptions(
+                                                        rosters.stream()
+                                                                .map(roster -> SelectOption.of(roster.getName(), roster.getId()))
+                                                                .toList())
+                                                .setPlaceholder("Select a roster to edit")
+                                                .build()
+                                ).queue();
                     }
                 }),
                 () -> event.getHook().sendMessage("This command can only be used in a server").queue()
@@ -56,10 +61,10 @@ public class EditRosterSlash implements SlashCommand {
     public void showRoster(InteractionHook hook, Guild guild, Roster roster) {
         hook.sendMessage("Roster: " + roster.getName())
                 .addActionRow(
-                        Button.primary(EventConstants.RENAME_ROSTER_BUTTON_COMMAND + roster.getId(), "Change name"),
-                        Button.danger(EventConstants.DELETE_ROSTER_BUTTON_COMMAND + roster.getId(), "Delete roster"),
-                        Button.success(EventConstants.CREATE_SQUAD_BUTTON_COMMAND, "Create squad"))
-                .queue();
+                        Button.primary(EventConstants.RENAME_ROSTER_BUTTON + roster.getId(), "Change name"),
+                        Button.danger(EventConstants.DELETE_ROSTER_BUTTON + roster.getId(), "Delete roster"),
+                        Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Create squad")
+                ).queue();
 
         roster.getSquads().forEach(squad -> {
             StringBuilder sb = new StringBuilder();
@@ -82,9 +87,9 @@ public class EditRosterSlash implements SlashCommand {
 
             hook.sendMessage(sb.toString())
                     .addActionRow(
-                            Button.primary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON_COMMAND + squad.getId(), "Change role"),
-                            Button.secondary(EventConstants.RENAME_SQUAD_BUTTON_COMMAND + squad.getId(), "Change name"),
-                            Button.danger(EventConstants.DELETE_SQUAD_BUTTON_COMMAND + squad.getId(), "Delete squad")
+                            Button.primary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"),
+                            Button.secondary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"),
+                            Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad")
                     ).queue();
         });
     }
