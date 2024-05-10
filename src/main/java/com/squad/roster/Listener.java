@@ -88,7 +88,9 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply(true)
+                .queue();
+
         if (event.getComponentId().startsWith(EDIT_ROSTER_STRING_SELECT)) {
             String rosterId = event.getValues().getFirst();
             new EditRosterSlash(rosterRepository).showRoster(

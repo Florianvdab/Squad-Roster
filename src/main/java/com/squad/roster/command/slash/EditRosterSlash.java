@@ -28,20 +28,24 @@ public class EditRosterSlash implements SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply(true)
+                .queue();
 
         Optional.ofNullable(event.getGuild()).ifPresentOrElse(
                 (guild -> {
                     List<Roster> rosters = rosterRepository.findAllByGuildId(guild.getId());
 
                     if (rosters.isEmpty()) {
-                        event.getHook().sendMessage("No rosters found, please create a roster using the /create-roster command").queue();
+                        event.getHook()
+                                .sendMessage("No rosters found, please create a roster using the /create-roster command")
+                                .queue();
                     }
                     if (rosters.size() == 1) {
                         showRoster(event.getHook(), guild, rosters.getFirst());
                     }
                     if (rosters.size() > 1) {
-                        event.getHook().sendMessage("Select a roster to edit")
+                        event.getHook()
+                                .sendMessage("Select a roster to edit")
                                 .addActionRow(
                                         StringSelectMenu.create(EDIT_ROSTER_STRING_SELECT)
                                                 .setRequiredRange(1, 1)
@@ -49,22 +53,24 @@ public class EditRosterSlash implements SlashCommand {
                                                         rosters.stream()
                                                                 .map(roster -> SelectOption.of(roster.getName(), roster.getId()))
                                                                 .toList())
-                                                .setPlaceholder("Select a roster to edit")
-                                                .build()
-                                ).queue();
+                                                .build()).
+                                queue();
                     }
                 }),
-                () -> event.getHook().sendMessage("This command can only be used in a server").queue()
+                () -> event.getHook()
+                        .sendMessage("This command can only be used in a server")
+                        .queue()
         );
     }
 
     public void showRoster(InteractionHook hook, Guild guild, Roster roster) {
         hook.sendMessage("Roster: " + roster.getName())
+                .setEphemeral(true)
                 .addActionRow(
                         Button.primary(EventConstants.RENAME_ROSTER_BUTTON + roster.getId(), "Change name"),
                         Button.danger(EventConstants.DELETE_ROSTER_BUTTON + roster.getId(), "Delete roster"),
-                        Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Create squad")
-                ).queue();
+                        Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Create squad"))
+                .queue();
 
         roster.getSquads().forEach(squad -> {
             StringBuilder sb = new StringBuilder();
@@ -86,6 +92,7 @@ public class EditRosterSlash implements SlashCommand {
             });
 
             hook.sendMessage(sb.toString())
+                    .setEphemeral(true)
                     .addActionRow(
                             Button.primary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"),
                             Button.secondary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"),

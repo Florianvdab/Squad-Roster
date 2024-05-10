@@ -16,14 +16,18 @@ public class RenameRosterModal implements ModalCommand {
 
     @Override
     public void execute(ModalInteractionEvent event) {
-        String id = event.getModalId().replace(EventConstants.RENAME_ROSTER_BUTTON, "");
+        String id = event.getModalId().replace(EventConstants.RENAME_ROSTER_MODAL, "");
         String name = event.getValue(NAME_INPUT).getAsString();
 
         rosterRepository.findById(id).ifPresentOrElse(roster -> {
                     roster.setName(name);
                     rosterRepository.save(roster);
-                    event.reply("name updated").queue();
+
+                    event.editMessage("Roster: " + name)
+                            .queue();
                 },
-                () -> event.reply("something unexpected happened").queue());
+                () -> event.reply("something unexpected happened")
+                        .setEphemeral(true)
+                        .queue());
     }
 }

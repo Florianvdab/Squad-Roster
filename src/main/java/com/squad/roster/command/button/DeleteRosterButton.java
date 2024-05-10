@@ -5,6 +5,8 @@ import com.squad.roster.repositories.RosterRepository;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
+import java.util.ArrayList;
+
 public class DeleteRosterButton implements ButtonCommand {
 
     private final RosterRepository rosterRepository;
@@ -17,8 +19,9 @@ public class DeleteRosterButton implements ButtonCommand {
     @Transactional
     public void execute(ButtonInteractionEvent event) {
         String id = event.getComponentId().replace(EventConstants.DELETE_ROSTER_BUTTON, "");
-
         rosterRepository.deleteById(id);
-        event.reply("roster deleted").queue();
+        event.editMessage("Roster deleted")
+                .setComponents(new ArrayList<>())
+                .queue();
     }
 }
