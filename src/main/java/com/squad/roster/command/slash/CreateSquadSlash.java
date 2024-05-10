@@ -22,17 +22,21 @@ public class CreateSquadSlash implements SlashCommand {
     public void execute(SlashCommandInteractionEvent event) {
         Role role = event.getOption("role").getAsRole();
         String name = event.getOption("name").getAsString();
-        String roster = event.getOption("roster").getAsString();
+        String rosterId = event.getOption("roster").getAsString();
 
-        rosterRepository.findByName(roster).ifPresentOrElse(
-                r -> {
-                    Squad squad = new Squad(r, name);
+        rosterRepository.findByName(rosterId).ifPresentOrElse(
+                roster -> {
+                    Squad squad = new Squad(roster, name);
                     squad.attachRole(role.getId());
                     squadRepository.save(squad);
 
-                    event.reply("squad saved, success").queue();
+                    event.reply("squad saved, success")
+                            .setEphemeral(true)
+                            .queue();
                 },
-                () -> event.reply("faulty roster").queue()
+                () -> event.reply("faulty roster")
+                        .setEphemeral(true)
+                        .queue()
         );
     }
 }

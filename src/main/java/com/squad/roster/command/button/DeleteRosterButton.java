@@ -20,7 +20,9 @@ public class DeleteRosterButton implements ButtonCommand {
     public void execute(ButtonInteractionEvent event) {
         String id = event.getComponentId().replace(EventConstants.DELETE_ROSTER_BUTTON, "");
         rosterRepository.deleteById(id);
-        event.editMessage("Roster deleted")
+        event.editMessage("""
+                        Roster deleted, BEWARE: Some squad edit messages might still be visible.
+                        """)
                 .setComponents(new ArrayList<>())
                 .queue();
     }

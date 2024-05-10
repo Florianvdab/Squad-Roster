@@ -2,15 +2,16 @@ package com.squad.roster;
 
 import com.squad.roster.command.button.*;
 import com.squad.roster.command.interaction.AttachRoleToSquadSelection;
-import com.squad.roster.command.modal.CreateSquadModal;
 import com.squad.roster.command.modal.RenameRosterModal;
 import com.squad.roster.command.modal.RenameSquadModal;
 import com.squad.roster.command.slash.CreateRosterSlash;
 import com.squad.roster.command.slash.CreateSquadSlash;
 import com.squad.roster.command.slash.EditRosterSlash;
 import com.squad.roster.command.slash.ShowRosterSlash;
+import com.squad.roster.model.Squad;
 import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
+import com.squad.roster.util.StringUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -18,6 +19,7 @@ import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionE
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -74,8 +76,6 @@ public class Listener extends ListenerAdapter {
             new RenameRosterModal(rosterRepository).execute(event);
         } else if (event.getModalId().startsWith(RENAME_SQUAD_MODAL)) {
             new RenameSquadModal(squadRepository).execute(event);
-        } else if (event.getModalId().startsWith(CREATE_SQUAD_MODAL)) {
-            new CreateSquadModal().execute(event);
         }
     }
 
@@ -84,16 +84,30 @@ public class Listener extends ListenerAdapter {
         if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON)) {
             new AttachRoleToSquadSelection().execute(event);
         }
+        if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_SELECT)) {
+            String squadId = event.getComponentId().replace(ATTACH_ROLE_SQUAD_SELECT, "");
+            Squad squad = squadRepository.findById(squadId).orElseThrow();
+            String roleId = event.getValues().getFirst().getId();
+            squad.attachRole(roleId);
+            squadRepository.save(squad);
+
+            event.editMessage(StringUtil.getSquadString(event.getGuild(), squad))
+                    .setActionRow(
+                            Button.primary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"),
+                            Button.secondary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"),
+                            Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad")
+                    ).queue();
+        }
     }
 
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        event.deferReply(true)
-                .queue();
+        if (event.getComponentId().startsWith(SELECT_ROSTER_EDIT_MODE)) {
+            event.deferReply(true)
+                    .queue();
 
-        if (event.getComponentId().startsWith(EDIT_ROSTER_STRING_SELECT)) {
             String rosterId = event.getValues().getFirst();
-            new EditRosterSlash(rosterRepository).showRoster(
+            StringUtil.showEditRoster(
                     event.getHook(),
                     event.getGuild(),
                     rosterRepository.findById(rosterId).orElseThrow());

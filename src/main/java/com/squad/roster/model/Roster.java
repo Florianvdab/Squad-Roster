@@ -1,9 +1,6 @@
 package com.squad.roster.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,7 @@ public class Roster {
     private String guildId;
     private String name;
 
-    @OneToMany(mappedBy = "roster", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "roster", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Squad> squads;
 
     public Roster(String name, String guildId) {

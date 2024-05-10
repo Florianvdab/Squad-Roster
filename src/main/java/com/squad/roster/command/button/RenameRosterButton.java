@@ -22,12 +22,12 @@ public class RenameRosterButton implements ButtonCommand {
         String rosterId = event.getComponentId().replace(RENAME_ROSTER_BUTTON, "");
 
         rosterRepository.findById(rosterId).ifPresentOrElse(
-                r -> {
+                roster -> {
                     TextInput input = TextInput.create(NAME_INPUT, "New name", TextInputStyle.SHORT)
                             .setMaxLength(32)
                             .build();
 
-                    Modal modal = Modal.create(RENAME_ROSTER_MODAL + r.getId(), "Rename roster")
+                    Modal modal = Modal.create(RENAME_ROSTER_MODAL + roster.getId(), "Rename roster")
                             .addComponents(ActionRow.of(input))
                             .build();
 
