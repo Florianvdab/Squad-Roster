@@ -4,7 +4,9 @@ import com.squad.roster.EventConstants;
 import com.squad.roster.repositories.SquadRepository;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class DeleteSquadButton implements ButtonCommand {
@@ -22,6 +24,8 @@ public class DeleteSquadButton implements ButtonCommand {
         squadRepository.deleteById(id);
         event.editMessage("Squad deleted")
                 .setComponents(new ArrayList<>())
+                .delay(Duration.ofSeconds(3))
+                .flatMap(InteractionHook::deleteOriginal)
                 .queue();
     }
 }

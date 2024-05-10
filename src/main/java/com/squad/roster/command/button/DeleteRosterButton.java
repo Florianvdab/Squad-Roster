@@ -4,7 +4,9 @@ import com.squad.roster.EventConstants;
 import com.squad.roster.repositories.RosterRepository;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class DeleteRosterButton implements ButtonCommand {
@@ -24,6 +26,8 @@ public class DeleteRosterButton implements ButtonCommand {
                         Roster deleted, BEWARE: Some squad edit messages might still be visible.
                         """)
                 .setComponents(new ArrayList<>())
+                .delay(Duration.ofSeconds(6))
+                .flatMap(InteractionHook::deleteOriginal)
                 .queue();
     }
 }
