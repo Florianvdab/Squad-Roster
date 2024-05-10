@@ -71,4 +71,18 @@ public abstract class EventUtil {
         components.add(Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad"));
         return components;
     }
+
+    public static void getBaseView(Roster first, InteractionHook hook) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Roster: ");
+        sb.append(first.getName());
+        sb.append("\n");
+        sb.append("Squads:");
+        first.getSquads().forEach((squad) -> {
+            sb.append("\n");
+            sb.append(squad.getName());
+        });
+        hook.sendMessage(sb.toString())
+                .queue();
+    }
 }

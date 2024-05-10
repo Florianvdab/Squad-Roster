@@ -44,7 +44,7 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
-            case ROSTER_SLASH -> new ShowRosterSlash().execute(event);
+            case ROSTER_SLASH -> new ShowRosterSlash(rosterRepository).execute(event);
             case CREATE_ROSTER_SLASH -> new CreateRosterSlash(rosterRepository).execute(event);
             case EDIT_ROSTER_SLASH -> new EditRosterSlash(rosterRepository).execute(event);
             case CREATE_SQUAD_SLASH -> new CreateSquadSlash(rosterRepository, squadRepository).execute(event);
@@ -107,6 +107,15 @@ public class Listener extends ListenerAdapter {
                     event.getHook(),
                     event.getGuild(),
                     rosterRepository.findById(rosterId).orElseThrow());
+        }
+        if (event.getComponentId().startsWith(SELECT_ROSTER_VIEW_MODE)) {
+            event.deferReply(true)
+                    .queue();
+
+            String rosterId = event.getValues().getFirst();
+            EventUtil.getBaseView(
+                    rosterRepository.findById(rosterId).orElseThrow(),
+                    event.getHook());
         }
     }
 }

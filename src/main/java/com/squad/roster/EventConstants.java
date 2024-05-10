@@ -21,4 +21,5 @@ public class EventConstants {
     public static final String NAME_INPUT = "rename-input";
 
     public static final String SELECT_ROSTER_EDIT_MODE = "edit-roster-select";
+    public static final String SELECT_ROSTER_VIEW_MODE = "view-roster-select";
 }

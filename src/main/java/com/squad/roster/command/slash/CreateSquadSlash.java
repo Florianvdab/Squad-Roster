@@ -5,6 +5,9 @@ import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+
+import java.time.Duration;
 
 public class CreateSquadSlash implements SlashCommand {
 
@@ -32,6 +35,8 @@ public class CreateSquadSlash implements SlashCommand {
 
                     event.reply("squad saved, success")
                             .setEphemeral(true)
+                            .delay(Duration.ofSeconds(6))
+                            .map(InteractionHook::deleteOriginal)
                             .queue();
                 },
                 () -> event.reply("faulty roster")
