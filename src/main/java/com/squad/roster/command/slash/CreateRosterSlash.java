@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.util.Optional;
 
-import static com.squad.roster.util.StringUtil.isNotNullOrEmpty;
+import static com.squad.roster.util.EventUtil.isNotNullOrEmpty;
 
 public class CreateRosterSlash implements SlashCommand {
 

@@ -2,7 +2,7 @@ package com.squad.roster.command.slash;
 
 import com.squad.roster.model.Roster;
 import com.squad.roster.repositories.RosterRepository;
-import com.squad.roster.util.StringUtil;
+import com.squad.roster.util.EventUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
@@ -37,7 +37,7 @@ public class EditRosterSlash implements SlashCommand {
                                 .queue();
                     }
                     if (rosters.size() == 1) {
-                        StringUtil.showEditRoster(event.getHook(), guild, rosters.getFirst());
+                        EventUtil.showEditRoster(event.getHook(), guild, rosters.getFirst());
                     }
                     if (rosters.size() > 1) {
                         event.getHook()

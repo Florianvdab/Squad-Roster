@@ -38,7 +38,7 @@ public class SquadRosterApplication {
         jda.updateCommands().addCommands(
                 Commands.slash(EventConstants.ROSTER_SLASH, "View a roster"),
                 Commands.slash(EventConstants.CREATE_ROSTER_SLASH, "Create a roster")
-                        .addOption(OptionType.STRING, "name", "Name for the roster (f.e PvP, Base)"),
+                        .addOption(OptionType.STRING, "name", "Name for the roster (f.e PvP, Base)", true),
                 Commands.slash(EventConstants.EDIT_ROSTER_SLASH, "Edit a roster"),
                 Commands.slash(EventConstants.CREATE_SQUAD_SLASH, "Create a squad")
                         .addOption(OptionType.STRING, "roster", "the roster that you'd like to connect the squad to", true)

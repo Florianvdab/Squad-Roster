@@ -6,9 +6,14 @@ import com.squad.roster.model.Squad;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
-public abstract class StringUtil {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SequencedCollection;
+
+public abstract class EventUtil {
     public static boolean isNotNullOrEmpty(String string) {
         return string != null && !string.isEmpty();
     }
@@ -16,10 +21,7 @@ public abstract class StringUtil {
     public static void showEditRoster(InteractionHook hook, Guild guild, Roster roster) {
         hook.sendMessage("Roster: " + roster.getName())
                 .setEphemeral(true)
-                .addActionRow(
-                        Button.primary(EventConstants.RENAME_ROSTER_BUTTON + roster.getId(), "Change name"),
-                        Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Add a squad"),
-                        Button.danger(EventConstants.DELETE_ROSTER_BUTTON + roster.getId(), "Delete roster"))
+                .addActionRow(getRosterComponents(roster))
                 .queue();
 
         roster.getSquads().forEach(squad -> showEditSquad(hook, guild, squad));
@@ -28,11 +30,8 @@ public abstract class StringUtil {
     public static void showEditSquad(InteractionHook hook, Guild guild, Squad squad) {
         hook.sendMessage(getSquadString(guild, squad))
                 .setEphemeral(true)
-                .addActionRow(
-                        Button.primary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"),
-                        Button.secondary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"),
-                        Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad")
-                ).queue();
+                .setActionRow(getSquadComponents(squad))
+                .queue();
     }
 
     public static String getSquadString(Guild guild, Squad squad) {
@@ -57,4 +56,19 @@ public abstract class StringUtil {
         return sb.toString();
     }
 
+    public static SequencedCollection<ItemComponent> getRosterComponents(Roster roster) {
+        List<ItemComponent> components = new ArrayList<>();
+        components.add(Button.primary(EventConstants.RENAME_ROSTER_BUTTON + roster.getId(), "Change name"));
+        components.add(Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Add a squad"));
+        components.add(Button.danger(EventConstants.DELETE_ROSTER_BUTTON + roster.getId(), "Delete roster"));
+        return components;
+    }
+
+    public static SequencedCollection<ItemComponent> getSquadComponents(Squad squad) {
+        List<ItemComponent> components = new ArrayList<>();
+        components.add(Button.primary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"));
+        components.add(Button.secondary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"));
+        components.add(Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad"));
+        return components;
+    }
 }

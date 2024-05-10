@@ -11,7 +11,7 @@ import com.squad.roster.command.slash.ShowRosterSlash;
 import com.squad.roster.model.Squad;
 import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
-import com.squad.roster.util.StringUtil;
+import com.squad.roster.util.EventUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionE
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -91,12 +90,9 @@ public class Listener extends ListenerAdapter {
             squad.attachRole(roleId);
             squadRepository.save(squad);
 
-            event.editMessage(StringUtil.getSquadString(event.getGuild(), squad))
-                    .setActionRow(
-                            Button.primary(EventConstants.RENAME_SQUAD_BUTTON + squad.getId(), "Change name"),
-                            Button.secondary(EventConstants.ATTACH_ROLE_SQUAD_BUTTON + squad.getId(), "Change role"),
-                            Button.danger(EventConstants.DELETE_SQUAD_BUTTON + squad.getId(), "Delete squad")
-                    ).queue();
+            event.editMessage(EventUtil.getSquadString(event.getGuild(), squad))
+                    .setActionRow(EventUtil.getSquadComponents(squad))
+                    .queue();
         }
     }
 
@@ -107,7 +103,7 @@ public class Listener extends ListenerAdapter {
                     .queue();
 
             String rosterId = event.getValues().getFirst();
-            StringUtil.showEditRoster(
+            EventUtil.showEditRoster(
                     event.getHook(),
                     event.getGuild(),
                     rosterRepository.findById(rosterId).orElseThrow());

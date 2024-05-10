@@ -2,7 +2,7 @@ package com.squad.roster.command.modal;
 
 import com.squad.roster.EventConstants;
 import com.squad.roster.repositories.SquadRepository;
-import com.squad.roster.util.StringUtil;
+import com.squad.roster.util.EventUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 
 
@@ -23,7 +23,7 @@ public class RenameSquadModal implements ModalCommand {
                     squad.setName(name);
                     squadRepository.save(squad);
 
-                    event.editMessage(StringUtil.getSquadString(event.getGuild(), squad))
+                    event.editMessage(EventUtil.getSquadString(event.getGuild(), squad))
                             .queue();
                 },
                 () -> event.reply("Squad not found")
