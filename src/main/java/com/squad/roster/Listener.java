@@ -1,17 +1,8 @@
 package com.squad.roster;
 
-import com.squad.roster.command.button.*;
-import com.squad.roster.command.interaction.AttachRoleToSquadSelection;
-import com.squad.roster.command.modal.RenameRosterModal;
-import com.squad.roster.command.modal.RenameSquadModal;
-import com.squad.roster.command.slash.CreateRosterSlash;
-import com.squad.roster.command.slash.CreateSquadSlash;
-import com.squad.roster.command.slash.EditRosterSlash;
-import com.squad.roster.command.slash.ShowRosterSlash;
-import com.squad.roster.model.Squad;
+import com.squad.roster.command.CommandManager;
 import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
-import com.squad.roster.util.EventUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -22,18 +13,16 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import static com.squad.roster.EventConstants.*;
+import java.util.Optional;
 
 @Component
 public class Listener extends ListenerAdapter {
 
-    private final SquadRepository squadRepository;
-
-    private final RosterRepository rosterRepository;
+    private final CommandManager commandManager;
 
     public Listener(SquadRepository squadRepository, RosterRepository rosterRepository) {
-        this.squadRepository = squadRepository;
-        this.rosterRepository = rosterRepository;
+        this.commandManager = new CommandManager(squadRepository, rosterRepository);
+
     }
 
     @Override
@@ -43,79 +32,31 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        switch (event.getName()) {
-            case ROSTER_SLASH -> new ShowRosterSlash(rosterRepository).execute(event);
-            case CREATE_ROSTER_SLASH -> new CreateRosterSlash(rosterRepository).execute(event);
-            case EDIT_ROSTER_SLASH -> new EditRosterSlash(rosterRepository).execute(event);
-            case CREATE_SQUAD_SLASH -> new CreateSquadSlash(rosterRepository, squadRepository).execute(event);
-            default -> event.reply("Unknown command").queue();
-        }
+        Optional.ofNullable(event.getGuild()).ifPresentOrElse(
+                _ -> commandManager.executeSlashCommand(event),
+                () -> event.reply("This bot can only be used in a server")
+                        .setEphemeral(true)
+                        .queue()
+        );
     }
 
     @Override
-    public void onButtonInteraction(ButtonInteractionEvent event) {
-        if (event.getComponentId().startsWith(RENAME_ROSTER_BUTTON)) {
-            new RenameRosterButton(rosterRepository).execute(event);
-        } else if (event.getComponentId().startsWith(DELETE_ROSTER_BUTTON)) {
-            new DeleteRosterButton(rosterRepository).execute(event);
-        } else if (event.getComponentId().startsWith(CREATE_SQUAD_BUTTON)) {
-            new CreateSquadButton().execute(event);
-        } else if (event.getComponentId().startsWith(DELETE_SQUAD_BUTTON)) {
-            new DeleteSquadButton(squadRepository).execute(event);
-        } else if (event.getComponentId().startsWith(RENAME_SQUAD_BUTTON)) {
-            new RenameSquadButton(squadRepository).execute(event);
-        } else if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON)) {
-            new AttachRoleToSquadButton().execute(event);
-        }
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        commandManager.executeButtonCommand(event);
     }
 
     @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
-        if (event.getModalId().startsWith(RENAME_ROSTER_MODAL)) {
-            new RenameRosterModal(rosterRepository).execute(event);
-        } else if (event.getModalId().startsWith(RENAME_SQUAD_MODAL)) {
-            new RenameSquadModal(squadRepository).execute(event);
-        }
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        commandManager.executeModalCommand(event);
     }
 
     @Override
-    public void onEntitySelectInteraction(EntitySelectInteractionEvent event) {
-        if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_BUTTON)) {
-            new AttachRoleToSquadSelection().execute(event);
-        }
-        if (event.getComponentId().startsWith(ATTACH_ROLE_SQUAD_SELECT)) {
-            String squadId = event.getComponentId().replace(ATTACH_ROLE_SQUAD_SELECT, "");
-            Squad squad = squadRepository.findById(squadId).orElseThrow();
-            String roleId = event.getValues().getFirst().getId();
-            squad.attachRole(roleId);
-            squadRepository.save(squad);
-
-            event.editMessage(EventUtil.getSquadString(event.getGuild(), squad))
-                    .setActionRow(EventUtil.getSquadComponents(squad))
-                    .queue();
-        }
+    public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
+        commandManager.executeEntitySelectCommand(event);
     }
 
     @Override
-    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        if (event.getComponentId().startsWith(SELECT_ROSTER_EDIT_MODE)) {
-            event.deferReply(true)
-                    .queue();
-
-            String rosterId = event.getValues().getFirst();
-            EventUtil.showEditRoster(
-                    event.getHook(),
-                    event.getGuild(),
-                    rosterRepository.findById(rosterId).orElseThrow());
-        }
-        if (event.getComponentId().startsWith(SELECT_ROSTER_VIEW_MODE)) {
-            event.deferReply(true)
-                    .queue();
-
-            String rosterId = event.getValues().getFirst();
-            EventUtil.getBaseView(
-                    rosterRepository.findById(rosterId).orElseThrow(),
-                    event.getHook());
-        }
+    public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
+        commandManager.executeStringSelectCommand(event);
     }
 }

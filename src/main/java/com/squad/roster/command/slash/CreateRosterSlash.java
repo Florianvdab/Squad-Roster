@@ -1,5 +1,6 @@
 package com.squad.roster.command.slash;
 
+import com.squad.roster.EventConstants;
 import com.squad.roster.model.Roster;
 import com.squad.roster.repositories.RosterRepository;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -28,5 +29,10 @@ public class CreateRosterSlash implements SlashCommand {
                 event.reply("Invalid roster name").setEphemeral(true).queue();
             }
         }, () -> event.reply("Invalid roster name").setEphemeral(true).queue());
+    }
+
+    @Override
+    public String getId() {
+        return EventConstants.CREATE_ROSTER_SLASH;
     }
 }

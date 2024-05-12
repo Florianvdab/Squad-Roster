@@ -1,5 +1,6 @@
 package com.squad.roster.command.slash;
 
+import com.squad.roster.EventConstants;
 import com.squad.roster.model.Roster;
 import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.util.EventUtil;
@@ -57,5 +58,10 @@ public class EditRosterSlash implements SlashCommand {
                         .sendMessage("This command can only be used in a server")
                         .queue()
         );
+    }
+
+    @Override
+    public String getId() {
+        return EventConstants.EDIT_ROSTER_SLASH;
     }
 }

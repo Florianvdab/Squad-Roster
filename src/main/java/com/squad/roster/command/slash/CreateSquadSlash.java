@@ -1,5 +1,6 @@
 package com.squad.roster.command.slash;
 
+import com.squad.roster.EventConstants;
 import com.squad.roster.model.Squad;
 import com.squad.roster.repositories.RosterRepository;
 import com.squad.roster.repositories.SquadRepository;
@@ -43,5 +44,10 @@ public class CreateSquadSlash implements SlashCommand {
                         .setEphemeral(true)
                         .queue()
         );
+    }
+
+    @Override
+    public String getId() {
+        return EventConstants.CREATE_SQUAD_SLASH;
     }
 }

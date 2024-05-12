@@ -28,4 +28,9 @@ public class DeleteSquadButton implements ButtonCommand {
                 .flatMap(InteractionHook::deleteOriginal)
                 .queue();
     }
+
+    @Override
+    public String getId() {
+        return EventConstants.DELETE_SQUAD_BUTTON;
+    }
 }

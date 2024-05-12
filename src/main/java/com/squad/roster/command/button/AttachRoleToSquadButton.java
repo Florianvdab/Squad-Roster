@@ -17,4 +17,9 @@ public class AttachRoleToSquadButton implements ButtonCommand {
                                 .build())
                 .queue();
     }
+
+    @Override
+    public String getId() {
+        return EventConstants.ATTACH_ROLE_SQUAD_BUTTON;
+    }
 }

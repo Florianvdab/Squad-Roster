@@ -35,4 +35,9 @@ public class RenameRosterButton implements ButtonCommand {
                 },
                 () -> event.reply("Roster not found").queue());
     }
+
+    @Override
+    public String getId() {
+        return RENAME_ROSTER_BUTTON;
+    }
 }

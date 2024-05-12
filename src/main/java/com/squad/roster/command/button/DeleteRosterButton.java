@@ -30,4 +30,9 @@ public class DeleteRosterButton implements ButtonCommand {
                 .flatMap(InteractionHook::deleteOriginal)
                 .queue();
     }
+
+    @Override
+    public String getId() {
+        return EventConstants.DELETE_ROSTER_BUTTON;
+    }
 }

@@ -30,4 +30,9 @@ public class RenameSquadModal implements ModalCommand {
                         .setEphemeral(true)
                         .queue());
     }
+
+    @Override
+    public String getId() {
+        return EventConstants.RENAME_SQUAD_MODAL;
+    }
 }

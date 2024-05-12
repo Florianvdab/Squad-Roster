@@ -34,4 +34,9 @@ public class RenameSquadButton implements ButtonCommand {
 
         }, () -> event.reply("Squad not found").queue());
     }
+
+    @Override
+    public String getId() {
+        return RENAME_SQUAD_BUTTON;
+    }
 }

@@ -4,4 +4,5 @@ import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionE
 
 public interface EntitySelectInteraction {
     void execute(EntitySelectInteractionEvent event);
+    String getId();
 }

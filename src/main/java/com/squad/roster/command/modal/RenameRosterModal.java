@@ -30,4 +30,9 @@ public class RenameRosterModal implements ModalCommand {
                         .setEphemeral(true)
                         .queue());
     }
+
+    @Override
+    public String getId() {
+        return EventConstants.RENAME_ROSTER_MODAL;
+    }
 }
