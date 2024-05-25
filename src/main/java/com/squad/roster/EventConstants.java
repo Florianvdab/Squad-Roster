@@ -22,4 +22,6 @@ public class EventConstants {
 
     public static final String SELECT_ROSTER_EDIT_MODE = "edit-roster-select";
     public static final String SELECT_ROSTER_VIEW_MODE = "view-roster-select";
+    public static final String CREATE_SQUAD_MODAL = "create-squad-modal-";
+    public static final String SQUAD_NAME_INPUT = "squad-name-input";
 }

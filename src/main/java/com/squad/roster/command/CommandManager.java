@@ -2,6 +2,7 @@ package com.squad.roster.command;
 
 import com.squad.roster.command.button.*;
 import com.squad.roster.command.interaction.*;
+import com.squad.roster.command.modal.CreateSquadModal;
 import com.squad.roster.command.modal.ModalCommand;
 import com.squad.roster.command.modal.RenameRosterModal;
 import com.squad.roster.command.modal.RenameSquadModal;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandManager {
-
 
     private final List<SlashCommand> slashCommands = new ArrayList<>();
     private final List<ButtonCommand> buttonCommands = new ArrayList<>();
@@ -41,6 +41,7 @@ public class CommandManager {
 
         modalCommands.add(new RenameRosterModal(rosterRepository));
         modalCommands.add(new RenameSquadModal(squadRepository));
+        modalCommands.add(new CreateSquadModal(squadRepository, rosterRepository));
 
         stringSelectInteractions.add(new SelectRosterView(rosterRepository));
         stringSelectInteractions.add(new SelectRosterEdit(rosterRepository));

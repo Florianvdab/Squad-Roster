@@ -37,21 +37,24 @@ public abstract class EventUtil {
     public static String getSquadString(Guild guild, Squad squad) {
         StringBuilder sb = new StringBuilder();
 
-        Role role = guild.getRoleById(squad.getConnectedRoleId());
-
         sb.append("Squad: ");
         sb.append(squad.getName());
         sb.append(" (");
-        sb.append(role.getAsMention());
-        sb.append(")");
+        if (squad.getConnectedRoleId() != null) {
+            Role role = guild.getRoleById(squad.getConnectedRoleId());
+            sb.append(role.getAsMention());
+            sb.append(")");
 
-        sb.append("\n");
-        sb.append("Members:");
-
-        guild.getMembersWithRoles(role).forEach((bar) -> {
             sb.append("\n");
-            sb.append(bar.getAsMention());
-        });
+            sb.append("Members:");
+
+            guild.getMembersWithRoles(role).forEach((bar) -> {
+                sb.append("\n");
+                sb.append(bar.getAsMention());
+            });
+        } else {
+            sb.append("Role not found)");
+        }
 
         return sb.toString();
     }
@@ -59,7 +62,7 @@ public abstract class EventUtil {
     public static SequencedCollection<ItemComponent> getRosterComponents(Roster roster) {
         List<ItemComponent> components = new ArrayList<>();
         components.add(Button.primary(EventConstants.RENAME_ROSTER_BUTTON + roster.getId(), "Change name"));
-        components.add(Button.success(EventConstants.CREATE_SQUAD_BUTTON, "Add a squad"));
+        components.add(Button.success(EventConstants.CREATE_SQUAD_BUTTON + roster.getId(), "Add a squad"));
         components.add(Button.danger(EventConstants.DELETE_ROSTER_BUTTON + roster.getId(), "Delete roster"));
         return components;
     }
