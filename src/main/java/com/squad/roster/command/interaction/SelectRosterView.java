@@ -15,13 +15,9 @@ public class SelectRosterView implements StringSelectInteraction {
 
     @Override
     public void execute(StringSelectInteractionEvent event) {
-        event.deferReply(true)
-                .queue();
-
         String rosterId = event.getValues().getFirst();
-        EventUtil.getBaseView(
-                rosterRepository.findById(rosterId).orElseThrow(),
-                event.getHook());
+        event.reply(EventUtil.getRosterView(rosterRepository.findById(rosterId).orElseThrow(), event.getGuild()))
+                .queue();
     }
 
     @Override

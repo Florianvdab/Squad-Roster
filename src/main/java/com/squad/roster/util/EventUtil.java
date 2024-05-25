@@ -75,17 +75,60 @@ public abstract class EventUtil {
         return components;
     }
 
-    public static void getBaseView(Roster first, InteractionHook hook) {
+    public static String getRosterView(Roster roster, Guild guild) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Roster: ");
-        sb.append(first.getName());
+        sb.append("# ");
+        sb.append(roster.getName());
         sb.append("\n");
-        sb.append("Squads:");
-        first.getSquads().forEach((squad) -> {
-            sb.append("\n");
-            sb.append(squad.getName());
-        });
-        hook.sendMessage(sb.toString())
-                .queue();
+        roster.getSquads().forEach((squad) -> sb.append(getSquadView(squad, guild)));
+        return sb.toString();
     }
+
+
+    public static String getSquadView(Squad squad, Guild guild) {
+        Role role = guild.getRoleById(squad.getConnectedRoleId());
+        assert role != null;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("## ");
+        sb.append(squad.getName());
+        sb.append(" - ");
+        sb.append(role.getAsMention());
+        sb.append("\n");
+        sb.append("> ");
+        sb.append("This needs to be a description");
+        sb.append("\n");
+        sb.append("Members:");
+        sb.append("\n");
+
+        guild.getMembersWithRoles(role).forEach((member) -> {
+            sb.append(member.getAsMention());
+            sb.append("      ");
+        });
+        return sb.toString();
+    }
+
+
+    /*
+    example:
+
+    # Base
+    ## Alpha - @Alpha
+    > No man left behind.
+    Members:
+    @Squad-Roster#1868
+    ## Bravo - @Bravo
+    > A battle for the ages!
+    Members:
+    @imwifix
+    ## Charlie - @Charlie
+    > Death before dishonor.
+    Members:
+    @imwifix
+    ## Echo - @Echo
+    > StemCellz for the win
+    Members:
+    @everyone
+
+     */
 }

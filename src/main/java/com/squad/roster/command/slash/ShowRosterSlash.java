@@ -36,7 +36,8 @@ public class ShowRosterSlash implements SlashCommand {
                     .queue();
         }
         if (rosters.size() == 1) {
-            EventUtil.getBaseView(rosters.getFirst(), event.getHook());
+            event.reply(EventUtil.getRosterView(rosters.getFirst(), guild))
+                    .queue();
         }
         if (rosters.size() > 1) {
             event.getHook()
